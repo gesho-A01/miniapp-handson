@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import liff from '@line/liff'
 
 const ClickShooter = () => {
   const canvasRef = useRef(null);
@@ -132,7 +133,7 @@ const ClickShooter = () => {
           bullet.y < enemy.y + enemy.height &&
           bullet.y + bullet.height > enemy.y
         ) {
-          // 敵の耐久値を減少
+          // 敵の耐久値を減少 
           enemy.health--;
           
           // 弾を削除
@@ -197,12 +198,156 @@ const ClickShooter = () => {
     };
   }, [gameStarted, gameOver]);
 
+  const handleShare = () => {
+    if (liff.isApiAvailable("shareTargetPicker")) {
+      liff.shareTargetPicker([
+        {
+          "type": "flex",
+          "altText": "シューティングゲームのスコアをシェア！",
+          "contents": {
+            "type": "bubble",
+            "hero": {
+              "type": "image",
+              "url": "https://raw.githubusercontent.com/gesho-A01/miniapp-handson/refs/heads/main/shoot.png",
+              "size": "full",
+              "aspectRatio": "20:13",
+              "aspectMode": "cover"
+            },
+            "body": {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": `シューティングゲームで${score}点をとったよ！`,
+                      "size": "lg",
+                      "color": "#000000",
+                      "weight": "bold",
+                      "wrap": true
+                    }
+                  ],
+                  "spacing": "none"
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "手軽に遊べるミニゲーム",
+                      "size": "sm",
+                      "color": "#999999",
+                      "wrap": true
+                    }
+                  ],
+                  "spacing": "none"
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "uri",
+                        "label": "遊んでみる！",
+                        "uri": `https://miniapp.line.me/${liff.id}`
+                      },
+                      "style": "primary",
+                      "height": "md",
+                      "color": "#17c950"
+                    },
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "uri",
+                        "label": "シェアする",
+                        "uri": `https://miniapp.line.me/${liff.id}/share`
+                      },
+                      "style": "link",
+                      "height": "md",
+                      "color": "#469fd6"
+                    }
+                  ],
+                  "spacing": "xs",
+                  "margin": "lg"
+                }
+              ],
+              "spacing": "md"
+            },
+            "footer": {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "separator",
+                  "color": "#f0f0f0"
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "image",
+                      "url": "https://raw.githubusercontent.com/gesho-A01/miniapp-handson/refs/heads/main/shoot.png",
+                      "flex": 1,
+                      "gravity": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "シューティングゲーム",
+                      "flex": 19,
+                      "size": "xs",
+                      "color": "#999999",
+                      "weight": "bold",
+                      "gravity": "center",
+                      "wrap": false
+                    },
+                    {
+                      "type": "image",
+                      "url": "https://vos.line-scdn.net/service-notifier/footer_go_btn.png",
+                      "flex": 1,
+                      "gravity": "center",
+                      "size": "xxs",
+                      "action": {
+                        "type": "uri",
+                        "label": "action",
+                        "uri": `https://miniapp.line.me/${liff.id}`
+                      }
+                    }
+                  ],
+                  "flex": 1,
+                  "spacing": "md",
+                  "margin": "md"
+                }
+              ]
+            }
+          }
+        }
+      ]).then(function (res) {
+        if (res) {
+          alert("シェアしました！");
+        } else {
+          alert("シェアをキャンセルしました。");
+        }
+      })
+      .catch(function (error) {
+        alert("エラーが発生しました。");
+      });
+    }
+  };
+
+
   return (
     <div className="w-full max-w-xl mx-auto bg-white shadow-md rounded-lg p-4">
       <h2 className="text-2xl font-bold text-center mb-4">クリックシューティングゲーム</h2>
       <div className="text-center mb-4">
         <p className="text-lg">スコア: {score}</p>
-        {gameOver && <p className="text-red-500">ゲームオーバー！再開するにはクリック</p>}
+        {gameOver && <div>ゲームオーバー！再開するにはクリック<button onClick={handleShare}>シェア！</button></div>}}
         {!gameStarted && <p>開始するにはクリック</p>}
       </div>
       <canvas 
