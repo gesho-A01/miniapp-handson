@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import liff from "@line/liff";
 import "./App.css";
+import ClickShooter from "./ClickShooter";
 
 function App() {
   const [name, setName] = useState("");
@@ -21,6 +22,7 @@ function App() {
   return (
     <div className="App">
       {name && <p>こんにちは、{name}さん</p>}
+      <ClickShooter />
     </div>
   );
 }
